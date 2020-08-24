@@ -56,6 +56,7 @@ function CreateProduct() {
     try {
       event.preventDefault();
       setLoading(true);
+      setError('');
       const mediaUrl = await handleIamgeUpload();
       const url = `${baseUrl}/api/product`;
       const { name, price, description } = product;
