@@ -4,6 +4,8 @@ import { parseCookies, destroyCookie } from 'nookies';
 import { redirectUser } from '../utils/auth';
 import baseUrl from '../utils/baseUrl';
 import axios from 'axios';
+import Router from 'next/router';
+
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
     const { token } = parseCookies(ctx);
@@ -25,6 +27,14 @@ class MyApp extends App {
         const url = `${baseUrl}/api/account`;
         const response = await axios.get(url, payload);
         const user = response.data;
+        const isRoot = user.role === 'root';
+        const isAdmin = user.role === 'admin';
+        //if authenticated, but not of role "admin" or "root", redirect from "/create" page
+        const isNotPermitted =
+          !(isRoot || isAdmin) && ctx.pathname === '/create';
+        if (isNotPermitted) {
+          redirectUser(ctx, '/');
+        }
         pageProps.user = user;
       } catch (error) {
         console.error('Error getting current user', error);
@@ -36,6 +46,17 @@ class MyApp extends App {
     }
     return { pageProps };
   }
+
+  componentDidMount() {
+    window.addEventListener('storage', this.syncLogout);
+  }
+
+  syncLogout = (e) => {
+    if (e.key === 'logout') {
+      console.log('logged out from storage');
+      Router.push('/login');
+    }
+  };
   render() {
     const { Component, pageProps } = this.props;
     return (

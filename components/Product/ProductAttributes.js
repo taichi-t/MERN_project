@@ -3,9 +3,12 @@ import { useState } from 'react';
 import axios from 'axios';
 import baseUrl from '../../utils/baseUrl';
 import { useRouter } from 'next/router';
-function ProductAttributes({ description, _id }) {
+function ProductAttributes({ description, _id, user }) {
   const [modal, setModal] = useState(false);
   const router = useRouter();
+  const isRoot = user && user.role === 'root';
+  const isAdmin = user && user.role === 'admin';
+  const isRoorOrAdmin = isRoot || isAdmin;
 
   async function handleDelete() {
     const url = `${baseUrl}/api/product`;
@@ -17,26 +20,30 @@ function ProductAttributes({ description, _id }) {
     <>
       <Header as="h3">about this product</Header>
       <p>{description}</p>
-      <Button
-        icon="trash alternate outline"
-        color="red"
-        content="Delete Product"
-        onClick={() => setModal(true)}
-      />
-      <Modal open={modal} dimmer="blurring">
-        <Modal.Header>Confirm Delete</Modal.Header>
-        <Modal.Content>Confirm Delete</Modal.Content>
-        <Modal.Actions>
-          <Button content="Cancel" onClick={() => setModal(false)} />
+      {isRoorOrAdmin && (
+        <>
           <Button
-            icon="trash"
-            negative
-            content="Delete"
-            labelPosition="right"
-            onClick={handleDelete}
+            icon="trash alternate outline"
+            color="red"
+            content="Delete Product"
+            onClick={() => setModal(true)}
           />
-        </Modal.Actions>
-      </Modal>
+          <Modal open={modal} dimmer="blurring">
+            <Modal.Header>Confirm Delete</Modal.Header>
+            <Modal.Content>Confirm Delete</Modal.Content>
+            <Modal.Actions>
+              <Button content="Cancel" onClick={() => setModal(false)} />
+              <Button
+                icon="trash"
+                negative
+                content="Delete"
+                labelPosition="right"
+                onClick={handleDelete}
+              />
+            </Modal.Actions>
+          </Modal>
+        </>
+      )}
     </>
   );
 }
