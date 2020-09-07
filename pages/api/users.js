@@ -9,6 +9,8 @@ export default async (req, res) => {
     );
     const users = await User.find({
       _id: { $ne: userId },
+    }).sort({
+      role: 'asc',
     });
     res.status(200).json(users);
   } catch (error) {

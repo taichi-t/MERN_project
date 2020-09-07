@@ -11,7 +11,7 @@ export default async (req, res) => {
     //1) check to see if a users exists with the provided email
     const user = await User.findOne({ email }).select('+password');
     //2) --if not, returnm error
-    console.log(user);
+
     if (!user) {
       return res.status(404).send('No user exists with that email');
     }

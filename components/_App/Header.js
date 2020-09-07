@@ -10,7 +10,7 @@ Router.onRouteError = () => NProgress.done();
 
 function Header({ user }) {
   const { pathname } = useRouter();
-  console.log({ user });
+
   const isRoot = user && user.role === 'root';
   const isAdmin = user && user.role === 'admin';
   const isRoorOrAdmin = isRoot || isAdmin;
